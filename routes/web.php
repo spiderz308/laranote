@@ -5,6 +5,7 @@ use App\Http\Controllers\FolderController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 
 Route::get('/', function () {
     return view('welcome');
@@ -30,6 +31,31 @@ Route::middleware('auth')->group(function () {
     Route::get('/notes/{note}/versions/{version}', [NoteController::class, 'showVersion'])->name('notes.versions.show');
     Route::post('/notes/{note}/versions/{version}/restore', [NoteController::class, 'restoreVersion'])->name('notes.versions.restore');
     Route::resource('folders', FolderController::class);
+});
+
+Route::get('/deploy/{token}', function ($token) {
+  abort_unless($token === env('DEPLOY_TOKEN'), 403);
+  
+    // 1. Run Migrations & Clear Cache
+    Artisan::call('migrate', ['--force' => true]);
+    Artisan::call('optimize:clear');
+    
+    // 2. Fix Storage Link (The Custom Fix)
+    // We point to the 'public_html' folder using $_SERVER['DOCUMENT_ROOT']
+    $targetFolder = storage_path('app/public');
+    $linkFolder = $_SERVER['DOCUMENT_ROOT'] . '/storage';
+    
+    if (!file_exists($linkFolder)) {
+        symlink($targetFolder, $linkFolder);
+        $storageStatus = 'Storage link created successfully.';
+    } else {
+        $storageStatus = 'Storage link already exists.';
+    }
+    
+    return "Deployment completed.<br>" .
+        "Migrations run.<br>" .
+        "Cache cleared.<br>" .
+        $storageStatus;
 });
 
 require __DIR__.'/auth.php';
