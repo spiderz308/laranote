@@ -102,15 +102,24 @@ return [
             'processors' => [PsrLogMessageProcessor::class],
         ],
 
+        // 'stderr' => [
+        //     'driver' => 'monolog',
+        //     'level' => env('LOG_LEVEL', 'debug'),
+        //     'handler' => StreamHandler::class,
+        //     'handler_with' => [
+        //         'stream' => 'php://stderr',
+        //     ],
+        //     'formatter' => env('LOG_STDERR_FORMATTER'),
+        //     'processors' => [PsrLogMessageProcessor::class],
+        // ],
         'stderr' => [
             'driver' => 'monolog',
             'level' => env('LOG_LEVEL', 'debug'),
-            'handler' => StreamHandler::class,
-            'handler_with' => [
+            'handler' => Monolog\Handler\StreamHandler::class,
+            'formatter' => env('LOG_STDERR_FORMATTER'),
+            'with' => [
                 'stream' => 'php://stderr',
             ],
-            'formatter' => env('LOG_STDERR_FORMATTER'),
-            'processors' => [PsrLogMessageProcessor::class],
         ],
 
         'syslog' => [
