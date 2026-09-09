@@ -15,6 +15,7 @@
     "APP_ENV": "production",
     "APP_DEBUG": "true",
     "LOG_CHANNEL": "stderr",
+    "LOG_STACK": "stderr",
     "CACHE_STORE": "array",
     "SESSION_DRIVER": "cookie",
     "VIEW_COMPILED_PATH": "/tmp",
