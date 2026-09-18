@@ -17,17 +17,4 @@ $app = Application::configure(basePath: dirname(__DIR__))
         //
     })->create();
 
-// Detect Vercel environment and use writable /tmp/storage
-$storagePath = env('APP_STORAGE');
-if ($storagePath || isset($_SERVER['LAMBDA_TASK_ROOT']) || isset($_SERVER['VERCEL'])) {
-    $storagePath = $storagePath ?? '/tmp/storage';
-    
-    @mkdir($storagePath . '/logs', 0777, true);
-    @mkdir($storagePath . '/framework/views', 0777, true);
-    @mkdir($storagePath . '/framework/cache', 0777, true);
-    @mkdir($storagePath . '/framework/sessions', 0777, true);
-    
-    $app->useStoragePath($storagePath);
-}
-
 return $app;
